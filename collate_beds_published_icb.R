@@ -1,7 +1,10 @@
-# Import packages ---------------------------------------------------------
+# Import packages --------------------------------------------------------
 
 library(tidyverse)
 library(janitor)
+library(rstudioapi)
+
+setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
 
 # Set working directory 
@@ -114,7 +117,7 @@ test_national_icb_source <- icb_beds_long %>%
 
 #write csv
 date_today <- Sys.Date()
-write.csv(x = icb_beds_long, file = paste0('output/monthly_beds_icb_', date_today))
+write.csv(x = icb_beds_long, file = paste0('output/monthly_beds_icb_', date_today,'.csv'), row.names = FALSE)
 
 #check 42 ICBs
 length(unique(icb_beds_long$icb_name)) == 42

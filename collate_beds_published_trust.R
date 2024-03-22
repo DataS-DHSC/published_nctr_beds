@@ -2,6 +2,9 @@
 
 library(tidyverse)
 library(janitor)
+library(rstudioapi)
+
+setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
 
 # Set working directory 
@@ -162,7 +165,7 @@ test_national_trust_source <- trust_beds_long %>%
   summarise(sum = sum(beds))
 #write csv
 date_today <- Sys.Date()
-write.csv(x = trust_beds_long, file = paste0('output/monthly_beds_trust_', date_today))
+write.csv(x = trust_beds_long, file = paste0('output/monthly_beds_trust_', date_today, '.csv'), row.names = FALSE)
 
 #check ~119 trusts inc. historical trusts
 length(unique(trust_beds_long$trust_name))

@@ -4,6 +4,9 @@ library(tidyverse)
 library(janitor)
 library(lubridate)
 library(zoo)
+library(rstudioapi)
+
+setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
 
 # Set working directory 
