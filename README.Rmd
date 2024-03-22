@@ -1,0 +1,8 @@
+Updating the monthly reporting tool process:
+
+- Download and add new monthly beds file from NHS website
+- Run collate scripts for trust and icb, producing new beds files stored in output folder
+- Retrieve daily NCTR data from DAC for icb and trust level, save in data/NCTR/ directory
+- Save latest NCTR monthly briefing document in data/NCTR/ as DAC pulls from ICB and trust level which do not quite equal national figures
+- Run beds_nctr_published_final_national.R to output national nctr with beds for tool
+- Run output_nctr_beds_trust_icb_final.R to output both icb and trust files for tool
