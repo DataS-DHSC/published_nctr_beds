@@ -4,8 +4,10 @@ library(tidyverse)
 library(janitor)
 library(lubridate)
 library(zoo)
+source(file = "./functions.R")
 
-
+# Set working directory 
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
 # Create vectors for later use from file names ----------------------------
 
@@ -49,7 +51,8 @@ NAT_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                              "B15:O16", #october 2023
                                              "B15:O16", #november 2023
                                              "B15:O16", #december 2023
-                                             "B15:O16"),#january 2024
+                                             "B15:O16", #january 2024
+                                             "B15:O16"), #february 2024
                                 ignore_rows = c(0, #april 2022 
                                                 0, #may 2022
                                                 0, #june 2022
@@ -71,7 +74,8 @@ NAT_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                                 0, #october 2023
                                                 0, #november 2023
                                                 0, #december 2023
-                                                0)) #january 2024
+                                                0, #january 2024
+                                                0)) #february 2024
 
 
 # Read data function ------------------------------------------------------
@@ -161,15 +165,15 @@ nat_beds_long <- nat_excel_list_formatted %>%
 length(beds_files) == dim(nat_beds_long)[1]
 
 #read in Carl's national nctr data csv file
-nat_nctr_daily <- readxl::read_xlsx(path = "./data/NCTR/20240208_January_2024_NCTR_briefing.xlsx",
-                        sheet = "Daily Series - January 2024",
-                        range = "B9:R1045") 
+nat_nctr_daily <- readxl::read_xlsx(path = "./data/NCTR/20240209_February_2024_NCTR_briefing.xlsx",
+                        sheet = "Daily Series - February 2024",
+                        range = "B9:R1074") 
 
 nat_nctr_daily <- nat_nctr_daily %>%
   clean_names() %>%
   select(date, 
          number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
-         number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside_2)
+         number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside_2) #7DRA column
   
 # Add floor month in prep for join ----
 

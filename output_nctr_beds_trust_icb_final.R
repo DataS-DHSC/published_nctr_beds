@@ -6,10 +6,13 @@ library(lubridate)
 library(zoo)
 source(file = "./functions.R")
 
+# Set working directory 
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
+
 # Import data ----
 
-icb_nctr <- read_csv(file = './data/NCTR/DAC_icb_nctr_final.csv')
-trust_nctr <- read_csv(file = './data/NCTR/DAC_trust_nctr_final.csv')
+icb_nctr <- read_csv(file = './data/NCTR/DAC_icb_nctr_final_feb.csv')
+trust_nctr <- read_csv(file = './data/NCTR/DAC_trust_nctr_final_feb.csv')
 
 nas_trusts <- check_proportion_nas(trust_nctr) #metric value 1.1% NAs
 nas_icbs <- check_proportion_nas(icb_nctr) #metric value 0% NAs
@@ -27,9 +30,9 @@ icb_nctr <- clean_data(icb_nctr)
 
 #bring in beds ----
 
-icb_beds <- read_csv(file = './output/monthly_beds_icb_2024-02-22') %>%
+icb_beds <- read_csv(file = './output/monthly_beds_icb_2024-03-20') %>%
   select(-`...1`)
-trusts_beds <- read_csv(file = './output/monthly_beds_trust_2024-02-21') %>%
+trusts_beds <- read_csv(file = './output/monthly_beds_trust_2024-03-20') %>%
   select(-`...1`)
 icb_trusts_map <- read_csv(file = './data/Trust_to_ICB_mapping_2023.csv')
 
@@ -127,6 +130,12 @@ icb_final <- icb_nctr %>%
 
 na_check_trust <- check_proportion_nas(trust_final)
 na_check_icb <- check_proportion_nas(icb_final)
+
+#ensure ordered by date
+trust_final <- trust_final %>%
+  arrange(Date)
+icb_final <- icb_final %>%
+  arrange(Date)
 
 writexl::write_xlsx(x = trust_final, path = 'output/trust_nctr_beds.xlsx')
 writexl::write_xlsx(x = icb_final, path = 'output/icb_nctr_beds.xlsx')

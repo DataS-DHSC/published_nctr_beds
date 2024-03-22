@@ -2,7 +2,10 @@
 
 library(tidyverse)
 library(janitor)
+source(file = "./functions.R")
 
+# Set working directory 
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
 # Create vectors for later use from file names ----------------------------
 
@@ -46,7 +49,8 @@ TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                              "B15:O190", #october 2023
                                              "B15:O191", #november 2023
                                              "B15:O191", #december 2023
-                                             "B15:O191"),#january 2024
+                                             "B15:O191", #january 2024
+                                             "B15:O191"), #february 2024
                                 ignore_rows = c(12, #april 2022 
                                                 12, #may 2022
                                                 12, #june 2022
@@ -68,7 +72,8 @@ TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                                 55, #october 2023
                                                 55, #november 2023
                                                 55, #december 2023
-                                                55)) #january 2024
+                                                55, #january 2024
+                                                55)) #february 2024
 
 
 # Read data function ------------------------------------------------------
@@ -159,7 +164,7 @@ test_national_trust_source <- trust_beds_long %>%
 date_today <- Sys.Date()
 write.csv(x = trust_beds_long, file = paste0('output/monthly_beds_trust_', date_today))
 
-#check 42 trusts
+#check ~119 trusts inc. historical trusts
 length(unique(trust_beds_long$trust_name))
 
 #check those trusts with different count to number of months

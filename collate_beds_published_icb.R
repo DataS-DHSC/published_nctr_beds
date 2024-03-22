@@ -2,7 +2,10 @@
 
 library(tidyverse)
 library(janitor)
+source(file = "./functions.R")
 
+# Set working directory 
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
 # Create vectors for later use from file names ----------------------------
 # Only ICB level data in published files from Aug 2023 - current
@@ -22,17 +25,19 @@ for(date in beds_files){
 # Create dataframe which USER SHOULD AMMEND AS APPROPRIATE ----------------
 
 ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-                              cell_ref = c("B15:O67", 
+                              cell_ref = c("B15:O67", #one per month
                                            "B15:O67",
                                            "B15:O67", 
                                            "B15:O67",
                                            "B15:O67", 
+                                           "B15:O67",
                                            "B15:O67"),
                               ignore_rows = c(11, 
                                               11, 
                                               11, 
                                               11, 
                                               11, 
+                                              11,
                                               11))
 
 # Read data function ------------------------------------------------------
