@@ -3,6 +3,8 @@
 library(tidyverse)
 library(janitor)
 library(rstudioapi)
+library(readxl)
+
 
 setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
@@ -16,9 +18,9 @@ CREATE_BACKSERIES <- TRUE
 # Create vectors for later use from file names ----------------------------
 # Only ICB level data in published files from Aug 2023 - current
 if(CREATE_BACKSERIES){
-  beds_files <- list.files(path = 'data/beds/icb/create_bs/')
+  beds_files <- list.files(path = 'data/beds/icb/create_bs/', pattern = '.xlsx')
   } else {
-  beds_files <- list.files(path = 'data/beds/icb/')
+  beds_files <- list.files(path = 'data/beds/icb/', pattern = '.xlsx')
 }
 year_month_vec <- c()
 month_floor_vec <- c()
@@ -58,11 +60,12 @@ read_data <- function(file_name, cell_ref, backseries){
   } else {
     path <- "data/beds/icb/"
   }
-  print(paste0(path, file_name))
+  sheet <- grep(excel_sheets(path = paste0(path, file_name)), 
+                pattern = 'type 1', 
+                value = TRUE)
   df <- readxl::read_xlsx(path = paste0(path, file_name),
-                          sheet = 1,
-                          range = cell_ref,
-                          na = "-")}
+                          sheet = sheet,
+                          range = cell_ref)}
 
 # Create list of excels, one item per month -------------------------------
 
@@ -74,6 +77,8 @@ list_excels <- function(df, backseries){
     #obtain cell references from df
     cell_ref <-  df$cell_ref[df$month_year==year_month_vec[i]]
     #get df with correct cell reference
+    print(beds_files[i])
+    print(cell_ref)
     beds_df_temp <- read_data(beds_files[i], cell_ref, backseries)
     print(sprintf("sucessfully read in file %s", beds_files[i]))
     temp_list[[i]] <- beds_df_temp}
@@ -129,7 +134,11 @@ test_national_icb_source <- icb_beds_long %>%
 
 #write csv
 date_today <- Sys.Date()
-write.csv(x = icb_beds_long, file = paste0('output/monthly_beds_icb_', date_today,'.csv'), row.names = FALSE)
+if(CREATE_BACKSERIES){
+  write.csv(x = icb_beds_long, file = paste0('data/beds/backseries/beds_icb_backseries','.csv'), row.names = FALSE)
+} else {
+  write.csv(x = icb_beds_long, file = paste0('output/monthly_beds_icb_', date_today,'.csv'), row.names = FALSE)
+  }
 
 #check 42 ICBs
 length(unique(icb_beds_long$icb_name)) == 42
