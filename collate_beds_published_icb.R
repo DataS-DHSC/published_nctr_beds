@@ -10,9 +10,16 @@ source(file = "./functions.R")
 # Set working directory 
 setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
+# Create backseries for icb beds from create_backseries/ directory
+CREATE_BACKSERIES <- TRUE
+
 # Create vectors for later use from file names ----------------------------
 # Only ICB level data in published files from Aug 2023 - current
-beds_files <- list.files(path = 'data/beds/icb/')
+if(CREATE_BACKSERIES){
+  beds_files <- list.files(path = 'data/beds/icb/create_bs/')
+  } else {
+  beds_files <- list.files(path = 'data/beds/icb/')
+}
 year_month_vec <- c()
 month_floor_vec <- c()
 for(date in beds_files){
@@ -28,13 +35,13 @@ for(date in beds_files){
 # Create dataframe which USER SHOULD AMMEND AS APPROPRIATE ----------------
 
 ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-                              cell_ref = c("B15:O67", #one per month
-                                           "B15:O67",
-                                           "B15:O67", 
-                                           "B15:O67",
-                                           "B15:O67", 
-                                           "B15:O67",
-                                           "B15:O67"),
+                              cell_ref = c("B15:O67", #aug 23
+                                           "B15:O67", #sep 23
+                                           "B15:O67", #oct 23
+                                           "B15:O67", #nov 23
+                                           "B15:O67", #dec 23
+                                           "B15:O67", #jan 24
+                                           "B15:O67"), #feb 24
                               ignore_rows = c(11, 
                                               11, 
                                               11, 
@@ -45,16 +52,21 @@ ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
 
 # Read data function ------------------------------------------------------
 
-read_data <- function(file_name, cell_ref){
-  df <- readxl::read_xlsx(path = paste0("./data/beds/icb/", file_name),
+read_data <- function(file_name, cell_ref, backseries){
+  if(backseries){
+    path <- "data/beds/icb/create_bs/"
+  } else {
+    path <- "data/beds/icb/"
+  }
+  print(paste0(path, file_name))
+  df <- readxl::read_xlsx(path = paste0(path, file_name),
                           sheet = 1,
                           range = cell_ref,
                           na = "-")}
 
-
 # Create list of excels, one item per month -------------------------------
 
-list_excels <- function(df){
+list_excels <- function(df, backseries){
   #create empty list
   temp_list <- list()
   #iterate through files in beds/ using index
@@ -62,13 +74,13 @@ list_excels <- function(df){
     #obtain cell references from df
     cell_ref <-  df$cell_ref[df$month_year==year_month_vec[i]]
     #get df with correct cell reference
-    beds_df_temp <- read_data(beds_files[i], cell_ref)
+    beds_df_temp <- read_data(beds_files[i], cell_ref, backseries)
     print(sprintf("sucessfully read in file %s", beds_files[i]))
     temp_list[[i]] <- beds_df_temp}
   return(temp_list)
 }
 
-icb_excel_list <- list_excels(ICB_CELL_REF_DF)
+icb_excel_list <- list_excels(ICB_CELL_REF_DF, CREATE_BACKSERIES)
 
 # Iterate through each dataframe in the list and wrangle to get
 # beds data --------
