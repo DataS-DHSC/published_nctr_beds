@@ -39,12 +39,9 @@ for(date in beds_files){
   month_floor_vec <- c(month_floor_vec, floor_month)
 }
 
-
-# Create dataframe which USER SHOULD AMMEND AS APPROPRIATE ----------------
-
-# ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-#                               cell_ref = c("B15:O67", "B15:O67"),
-#                               ignore_rows = c(12, 12))
+# DF length needs to match number of files in dir we are reading from
+# E.g. create_bs/ or trusts/
+# USER SHOULD AMMEND AS APPROPRIATE ----------------
 TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                 cell_ref = c(#"B15:O150", #april 2022
                                              #"B15:O150", #may 2022
