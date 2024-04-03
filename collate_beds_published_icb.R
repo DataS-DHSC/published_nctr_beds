@@ -132,21 +132,6 @@ test_national_icb_source <- icb_beds_long %>%
   group_by(floor_month) %>%
   summarise(sum = sum(beds))
 
-#write csv
-date_today <- Sys.Date()
-if(CREATE_BACKSERIES == TRUE){
-  # overwrite backseries
-  write.csv(x = icb_beds_long, 
-            file = paste0('data/beds/backseries/beds_icb_backseries','.csv'), 
-            row.names = FALSE)
-} else {
-  # append new data to backseries
-  icb_backseries_and_new <- rbind(icb_backseries, icb_beds_long)
-  write.csv(x = icb_backseries_and_new, 
-            file = paste0('output/monthly_beds_icb_', date_today,'.csv'), 
-            row.names = FALSE)
-  }
-
 #check 42 ICBs
 length(unique(icb_beds_long$icb_name)) == 42
 
@@ -164,4 +149,20 @@ count_occurences <- function(data){
 }
 
 check <- count_occurences(icb_beds_long)
+
+#write csv
+date_today <- Sys.Date()
+if(CREATE_BACKSERIES == TRUE){
+  # overwrite backseries
+  write.csv(x = icb_beds_long, 
+            file = paste0('data/beds/backseries/beds_icb_backseries','.csv'), 
+            row.names = FALSE)
+} else {
+  # append new data to backseries
+  icb_backseries_and_new <- rbind(icb_backseries, icb_beds_long)
+  write.csv(x = icb_backseries_and_new, 
+            file = paste0('output/monthly_beds_icb_', date_today,'.csv'), 
+            row.names = FALSE)
+  }
+
 check <- count_occurences(icb_backseries_and_new)
