@@ -65,7 +65,7 @@ ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
 # Read data function ------------------------------------------------------
 
 read_data <- function(file_name, cell_ref, backseries){
-  if(backseries){
+  if(backseries == TRUE){
     path <- "data/beds/icb/create_bs/"
   } else {
     path <- "data/beds/icb/"

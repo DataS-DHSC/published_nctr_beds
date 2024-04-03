@@ -3,6 +3,7 @@
 library(tidyverse)
 library(janitor)
 library(rstudioapi)
+library(readxl)
 
 setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
@@ -10,9 +11,23 @@ source(file = "./functions.R")
 # Set working directory 
 setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
-# Create vectors for later use from file names ----------------------------
+# Create backseries for icb beds from create_backseries/ directory
+CREATE_BACKSERIES <- F
 
-beds_files <- list.files(path = 'data/beds/trusts/')
+# #If not creating backseries, then read in backseries
+# if(CREATE_BACKSERIES == FALSE){
+#   trust_backseries <- read_csv(file = './data/beds/backseries/beds_trusts_backseries.csv')
+#   print("read in backseries, ready to append new data to it")
+# } else {
+#   print("creating backseries")
+# }
+
+# Create vectors for later use from file names ----------------------------
+if(CREATE_BACKSERIES){
+  beds_files <- list.files(path = 'data/beds/trusts/create_bs/', pattern = '.xlsx')
+} else {
+  beds_files <- list.files(path = 'data/beds/trusts/', pattern = '.xlsx')
+}
 year_month_vec <- c()
 month_floor_vec <- c()
 for(date in beds_files){
@@ -81,16 +96,24 @@ TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
 
 # Read data function ------------------------------------------------------
 
-read_data <- function(file_name, cell_ref){
+read_data <- function(file_name, cell_ref, backseries){
+  if(backseries == TRUE){
+    path <- "data/beds/trusts/create_bs/"
+  } else {
+    path <- "data/beds/trusts/"
+  }
+  sheet <- grep(excel_sheets(path = paste0(path, file_name)), 
+                pattern = 'type 1', 
+                value = TRUE)
   df <- readxl::read_xlsx(path = paste0("./data/beds/trusts/", file_name),
-                          sheet = 1,
+                          sheet = sheet,
                           range = cell_ref,
                           na = "-")}
 
 
 # Create list of excels, one item per month -------------------------------
 
-list_excels <- function(df){
+list_excels <- function(df, backseries){
   #create empty list
   temp_list <- list()
   #iterate through files in beds/ using index
@@ -98,29 +121,25 @@ list_excels <- function(df){
     #obtain cell references from df
     print(beds_files[i])
     cell_ref <-  df$cell_ref[df$month_year==year_month_vec[i]]
-    print(cell_ref)
     #get df with correct cell reference
-    beds_df_temp <- read_data(beds_files[i], cell_ref)
+    beds_df_temp <- read_data(beds_files[i], cell_ref, backseries)
     print(sprintf("sucessfully read in file %s", beds_files[i]))
-    #View(beds_df_temp)
-    #break
     temp_list[[i]] <- beds_df_temp}
   return(temp_list)
 }
 
 #icb_excel_list <- list_excels(ICB_CELL_REF_DF)
-trust_excel_list <- list_excels(TRUST_CELL_REF_DF)
+trust_excel_list <- list_excels(TRUST_CELL_REF_DF, CREATE_BACKSERIES)
 
 
 # Iterate through each dataframe in the list and wrangle to get
 # beds data --------
 
-wrangle_sheets <- function(excel_list, cell_ref_df, type){
+wrangle_sheets <- function(excel_list, cell_ref_df){
   for(i in c(1: length(excel_list))){
     # iterate through each month
     df <- excel_list[[i]]
     # cell_ref_df$ignore_rows[i] gets ignore_rows in cell reference df
-    print("-------")
     print(paste0("ignore rows: ",cell_ref_df$ignore_rows[i]))
     print(paste0("cut up to row: ", dim(df)[1]))
     df <- df[c(cell_ref_df$ignore_rows[i]:dim(df)[1]),]
@@ -145,14 +164,12 @@ wrangle_sheets <- function(excel_list, cell_ref_df, type){
     print(as.Date(month_floor_vec[i]))
     # keep selected columns
     df <- df %>% select('region', 'trust_code', 'trust_name', 'beds', 'floor_month')
-    #View(df)
     # update / overwrite original list
     excel_list[[i]] <- df}
   return(excel_list)
 }
 
-#icb_excel_list_formatted <- wrangle_sheets(icb_excel_list, ICB_CELL_REF_DF, "icb")
-trust_excel_list_formatted <- wrangle_sheets(trust_excel_list, TRUST_CELL_REF_DF, "trust")
+trust_excel_list_formatted <- wrangle_sheets(trust_excel_list, TRUST_CELL_REF_DF)
 
 #combine rows
 trust_beds_long <- trust_excel_list_formatted %>%
@@ -163,9 +180,21 @@ trust_beds_long <- trust_excel_list_formatted %>%
 test_national_trust_source <- trust_beds_long %>%
   group_by(floor_month) %>%
   summarise(sum = sum(beds))
-#write csv
+
+#write csv ----
 date_today <- Sys.Date()
-write.csv(x = trust_beds_long, file = paste0('output/monthly_beds_trust_', date_today, '.csv'), row.names = FALSE)
+if(CREATE_BACKSERIES == TRUE){
+  # overwrite backseries
+  write.csv(x = trust_beds_long, 
+            file = paste0('data/beds/backseries/beds_trusts_backseries','.csv'), 
+            row.names = FALSE)
+} else {
+  # append new data to backseries
+  icb_backseries_and_new <- rbind(trust_backseries, trust_beds_long)
+  write.csv(x = icb_backseries_and_new, 
+            file = paste0('output/monthly_beds_trusts_', date_today,'.csv'), 
+            row.names = FALSE)
+}
 
 #check ~119 trusts inc. historical trusts
 length(unique(trust_beds_long$trust_name))
