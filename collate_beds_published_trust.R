@@ -65,7 +65,8 @@ TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                              #"B15:O191", #november 2023
                                              #"B15:O191", #december 2023
                                              #"B15:O191", #january 2024
-                                             "B15:O191"), #february 2024
+                                             #"B15:O191", #february 2024
+                                             "B15:O191"), #march 2024
                                 ignore_rows = c(#12, #april 2022 
                                                 #12, #may 2022
                                                 #12, #june 2022
@@ -88,7 +89,8 @@ TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                                 #55, #november 2023
                                                 #55, #december 2023
                                                 #55, #january 2024
-                                                55)) #february 2024
+                                                #55,  #february 2024
+                                                55)) #march 2024
 
 
 # Read data function ------------------------------------------------------

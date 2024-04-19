@@ -5,6 +5,7 @@ library(janitor)
 library(lubridate)
 library(zoo)
 library(rstudioapi)
+library(readxl)
 
 setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
@@ -12,9 +13,24 @@ source(file = "./functions.R")
 # Set working directory 
 setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
 
-# Create vectors for later use from file names ----------------------------
+# Create backseries for icb beds from create_backseries/ directory
+CREATE_BACKSERIES <- FALSE
 
-beds_files <- list.files(path = 'data/beds/trusts/')
+#If not creating backseries, then read in backseries
+if(CREATE_BACKSERIES == FALSE){
+  national_backseries <- read_csv(file = './data/beds/backseries/beds_national_backseries.csv')
+  print("read in backseries, ready to append new data to it")
+} else {
+  print("creating backseries")
+}
+
+# Create vectors for later use from file names ----------------------------
+if(CREATE_BACKSERIES){
+  beds_files <- list.files(path = 'data/beds/trusts/create_bs/', pattern = '.xlsx')
+} else {
+  beds_files <- list.files(path = 'data/beds/trusts/', pattern = '.xlsx')
+}
+# Create vectors for later use from file names ----------------------------
 year_month_vec <- c()
 month_floor_vec <- c()
 for(date in beds_files){
@@ -33,66 +49,76 @@ for(date in beds_files){
 #                               cell_ref = c("B15:O67", "B15:O67"),
 #                               ignore_rows = c(12, 12))
 NAT_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-                                cell_ref = c("B15:O16", #april 2022
-                                             "B15:O16", #may 2022
-                                             "B15:O16", #june 2022
-                                             "B15:O16", #july 2022
-                                             "B15:O16", #august 2022
-                                             "B15:O16", #september 2022
-                                             "B15:O16", #october 2022
-                                             "B15:O16", #november 2022
-                                             "B15:O16", #december 2022
-                                             "B15:O16", #january 2023
-                                             "B15:O16", #february 2023
-                                             "B15:O16", #march 2023
-                                             "B15:O16", #april 2023
-                                             "B15:O16", #may 2023
-                                             "B15:O16", #june 2023
-                                             "B15:O16", #july 2023
-                                             "B15:O16", #august 2023
-                                             "B15:O16", #september 2023
-                                             "B15:O16", #october 2023
-                                             "B15:O16", #november 2023
-                                             "B15:O16", #december 2023
-                                             "B15:O16", #january 2024
-                                             "B15:O16"), #february 2024
-                                ignore_rows = c(0, #april 2022 
-                                                0, #may 2022
-                                                0, #june 2022
-                                                0, #july 2022
-                                                0, #august 2022
-                                                0, #september 2022
-                                                0, #october 2022
-                                                0, #november 2022
-                                                0, #december 2022
-                                                0, #january 2023
-                                                0, #february 2023
-                                                0, #march 2023
-                                                0, #april 2023
-                                                0, #may 2023
-                                                0, #june 2023
-                                                0, #july 2023
-                                                0, #august 2023
-                                                0, #september 2023
-                                                0, #october 2023
-                                                0, #november 2023
-                                                0, #december 2023
-                                                0, #january 2024
-                                                0)) #february 2024
+                                cell_ref = c(#"B15:O16", #april 2022
+                                             #"B15:O16", #may 2022
+                                             #"B15:O16", #june 2022
+                                             #"B15:O16", #july 2022
+                                             #"B15:O16", #august 2022
+                                             #"B15:O16", #september 2022
+                                             #"B15:O16", #october 2022
+                                             #"B15:O16", #november 2022
+                                             #"B15:O16", #december 2022
+                                             #"B15:O16", #january 2023
+                                             #"B15:O16", #february 2023
+                                             #"B15:O16", #march 2023
+                                             #"B15:O16", #april 2023
+                                             #"B15:O16", #may 2023
+                                             #"B15:O16", #june 2023
+                                             #"B15:O16", #july 2023
+                                             #"B15:O16", #august 2023
+                                             #"B15:O16", #september 2023
+                                             #"B15:O16", #october 2023
+                                             #"B15:O16", #november 2023
+                                             #"B15:O16", #december 2023
+                                             #"B15:O16", #january 2024
+                                             #"B15:O16"), #february 2024
+                                             "B15:O16"), #march 2024
+                                ignore_rows = c(#0, #april 2022 
+                                                #0, #may 2022
+                                                #0, #june 2022
+                                                #0, #july 2022
+                                                #0, #august 2022
+                                                #0, #september 2022
+                                                #0, #october 2022
+                                                #0, #november 2022
+                                                #0, #december 2022
+                                                #0, #january 2023
+                                                #0, #february 2023
+                                                #0, #march 2023
+                                                #0, #april 2023
+                                                #0, #may 2023
+                                                #0, #june 2023
+                                                #0, #july 2023
+                                                #0, #august 2023
+                                                #0, #september 2023
+                                                #0, #october 2023
+                                                #0, #november 2023
+                                                #0, #december 2023
+                                                #0, #january 2024
+                                                #0)) #february 2024
+                                                0)) #march 2024
 
 
 # Read data function ------------------------------------------------------
 
-read_data <- function(file_name, cell_ref){
-  df <- readxl::read_xlsx(path = paste0("./data/beds/trusts/", file_name),
-                          sheet = 1,
+read_data <- function(file_name, cell_ref, backseries){
+  if(backseries == TRUE){
+    path <- "data/beds/trusts/create_bs/"
+  } else {
+    path <- "data/beds/trusts/"
+  }
+  sheet <- grep(excel_sheets(path = paste0(path, file_name)), 
+                pattern = 'type 1', 
+                value = TRUE)
+  df <- readxl::read_xlsx(path = paste0(path, file_name),
+                          sheet = sheet,
                           range = cell_ref,
                           na = "-")}
 
 
 # Create list of excels, one item per month -------------------------------
 
-list_excels <- function(df){
+list_excels <- function(df, backseries){
   #create empty list
   temp_list <- list()
   #iterate through files in beds/ using index
@@ -102,7 +128,7 @@ list_excels <- function(df){
     cell_ref <-  df$cell_ref[df$month_year==year_month_vec[i]]
     print(cell_ref)
     #get df with correct cell reference
-    beds_df_temp <- read_data(beds_files[i], cell_ref)
+    beds_df_temp <- read_data(beds_files[i], cell_ref, backseries)
     print(sprintf("sucessfully read in file %s", beds_files[i]))
     #View(beds_df_temp)
     #break
@@ -110,14 +136,12 @@ list_excels <- function(df){
   return(temp_list)
 }
 
-#icb_excel_list <- list_excels(ICB_CELL_REF_DF)
-nat_excel_list <- list_excels(NAT_CELL_REF_DF)
-
+nat_excel_list <- list_excels(NAT_CELL_REF_DF, CREATE_BACKSERIES)
 
 # Iterate through each dataframe in the list and wrangle to get
 # beds data --------
 
-wrangle_sheets <- function(excel_list, cell_ref_df, type){
+wrangle_sheets <- function(excel_list, cell_ref_df){
   for(i in c(1: length(excel_list))){
     # iterate through each month
     df <- excel_list[[i]]
@@ -153,8 +177,7 @@ wrangle_sheets <- function(excel_list, cell_ref_df, type){
   return(excel_list)
 }
 
-#icb_excel_list_formatted <- wrangle_sheets(icb_excel_list, ICB_CELL_REF_DF, "icb")
-nat_excel_list_formatted <- wrangle_sheets(nat_excel_list, NAT_CELL_REF_DF, "trust")
+nat_excel_list_formatted <- wrangle_sheets(nat_excel_list, NAT_CELL_REF_DF)
 
 #combine rows
 nat_beds_long <- nat_excel_list_formatted %>%
@@ -167,42 +190,51 @@ nat_beds_long <- nat_excel_list_formatted %>%
 #Check correct number of rows
 length(beds_files) == dim(nat_beds_long)[1]
 
-#read in Carl's national nctr data csv file
-nat_nctr_daily <- readxl::read_xlsx(path = "./data/NCTR/20240209_February_2024_NCTR_briefing.xlsx",
-                        sheet = "Daily Series - February 2024",
-                        range = "B9:R1074") 
-
-nat_nctr_daily <- nat_nctr_daily %>%
-  clean_names() %>%
-  select(date, 
-         number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
-         number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside_2) #7DRA column
+if(CREATE_BACKSERIES == TRUE){
+  # overwrite backseries
+  write.csv(x = nat_beds_long, 
+            file = paste0('data/beds/backseries/beds_national_backseries','.csv'), 
+            row.names = FALSE)
+} else{
+  national_backseries_and_new <- rbind(national_backseries, nat_beds_long)
+  #read in Carl's national nctr data csv file
+  nat_nctr_daily <- readxl::read_xlsx(path = "./data/NCTR/20240411_March_2024_NCTR_briefing.xlsx",
+                                      sheet = "Daily Series - March 2024",
+                                      range = "B5:R1101") 
   
-# Add floor month in prep for join ----
-
-add_floor_month <- function(data){
-  data <- data %>%
-    mutate(floor_month = floor_date(ymd(date), "month"))
+  nat_nctr_daily <- nat_nctr_daily %>%
+    clean_names() %>%
+    select(date, 
+           number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
+           seven_dra_of_number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside) #7DRA column
+  
+  # Add floor month in prep for join ----
+  
+  add_floor_month <- function(data){
+    data <- data %>%
+      mutate(floor_month = floor_date(ymd(date), "month"))
+  }
+  
+  nat_nctr_daily <- add_floor_month(nat_nctr_daily)
+  
+  #join beds and alter column headers for write ----
+  by_month <- join_by(floor_month)
+  nat_nctr_beds_final <- nat_nctr_daily %>%
+    left_join(national_backseries_and_new,
+              by = by_month) %>%
+    mutate(date = as.Date(date)) %>%
+    filter(date >= "2022-07-01") %>% 
+    mutate(trust_name = "ENGLAND") %>%
+    rename(`Org Code` = trust_code,
+           `Org Name` = trust_name,
+           `NCTR Value` = number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
+           `NCTR 7-day RA` = seven_dra_of_number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
+           `G&A beds` = beds,
+           Date = date) %>%
+    select(`Org Name`, Date, `NCTR Value`, `G&A beds`, `NCTR 7-day RA`)
+  
+  #write output
+  writexl::write_xlsx(x = nat_nctr_beds_final, path = paste0('output/national_nctr_beds.xlsx'))
 }
 
-nat_nctr_daily <- add_floor_month(nat_nctr_daily)
 
-#join beds and alter column headers for write ----
-by_month <- join_by(floor_month)
-nat_nctr_beds_final <- nat_nctr_daily %>%
-  left_join(nat_beds_long,
-            by = by_month) %>%
-  mutate(date = as.Date(date)) %>%
-  filter(date >= "2022-07-01") %>% 
-  mutate(trust_name = "ENGLAND") %>%
-  rename(`Org Code` = trust_code,
-         `Org Name` = trust_name,
-         `NCTR Value` = number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside,
-         `NCTR 7-day RA` = number_of_patients_remaining_in_hospital_who_no_longer_meet_the_criteria_to_reside_2,
-         `G&A beds` = beds,
-         Date = date) %>%
-  select(`Org Name`, Date, `NCTR Value`, `G&A beds`, `NCTR 7-day RA`)
-
-
-#write output
-writexl::write_xlsx(x = nat_nctr_beds_final, path = 'output/national_nctr_beds.xlsx')
