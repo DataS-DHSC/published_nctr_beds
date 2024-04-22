@@ -14,8 +14,8 @@ setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCen
 
 # Import data ----
 
-icb_nctr <- read_csv(file = './data/NCTR/DAC_icb_nctr_final_feb.csv')
-trust_nctr <- read_csv(file = './data/NCTR/DAC_trust_nctr_final_feb.csv')
+icb_nctr <- read_csv(file = './data/NCTR/DAC_icb_nctr_final_mar.csv')
+trust_nctr <- read_csv(file = './data/NCTR/DAC_trust_nctr_final_mar.csv')
 
 nas_trusts <- check_proportion_nas(trust_nctr) #metric value 1.1% NAs
 nas_icbs <- check_proportion_nas(icb_nctr) #metric value 0% NAs
@@ -33,10 +33,8 @@ icb_nctr <- clean_data(icb_nctr)
 
 #bring in beds ----
 
-icb_beds <- read_csv(file = './output/monthly_beds_icb_2024-03-20') %>%
-  select(-`...1`)
-trusts_beds <- read_csv(file = './output/monthly_beds_trust_2024-03-20') %>%
-  select(-`...1`)
+icb_beds <- read_csv(file = './output/monthly_beds_icb_2024-04-19.csv') 
+trusts_beds <- read_csv(file = './output/monthly_beds_trusts_2024-04-19.csv')
 icb_trusts_map <- read_csv(file = './data/Trust_to_ICB_mapping_2023.csv')
 
 #test for consistency between icb and trust beds after August 2023
