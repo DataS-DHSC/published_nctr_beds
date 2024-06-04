@@ -10,10 +10,10 @@ setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
 
 # Set working directory 
-setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/NCTR Published - Briefing Tool/Code/")
 
 # Create backseries for icb beds from create_backseries/ directory
-CREATE_BACKSERIES <- FALSE
+CREATE_BACKSERIES <- TRUE
 
 #If not creating backseries, then read in backseries
 if(CREATE_BACKSERIES == FALSE){
@@ -47,22 +47,24 @@ for(date in beds_files){
 # USER SHOULD AMMEND AS APPROPRIATE ----------------
 
 ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-                              cell_ref = c(#"B15:O67", #aug 23
-                                           #"B15:O67", #sep 23
-                                           #"B15:O67", #oct 23
-                                           #"B15:O67", #nov 23
-                                           #"B15:O67", #dec 23
-                                           #"B15:O67", #jan 24
-                                           #"B15:O67",  #feb 24
-                                           "B15:O67"), #mar 24
-                              ignore_rows = c(#11, 
-                                              #11, 
-                                              #11, 
-                                              #11, 
-                                              #11, 
-                                              #11,
-                                              #11,  #feb 24
-                                              11)) #mar 24
+                              cell_ref = c("B15:O67", #aug 23
+                                           "B15:O67", #sep 23
+                                           "B15:O67", #oct 23
+                                           "B15:O67", #nov 23
+                                           "B15:O67", #dec 23
+                                           "B15:O67", #jan 24
+                                           "B15:O67",  #feb 24
+                                           "B15:O67", #mar 24
+                                           "B15:O67"), #apr 24
+                              ignore_rows = c(11, 
+                                              11, 
+                                              11, 
+                                              11, 
+                                              11, 
+                                              11,
+                                              11,  #feb 24
+                                              11, #mar 24
+                                              11)) #apr 24
 
 # Read data function ------------------------------------------------------
 
@@ -155,9 +157,13 @@ check <- count_occurences(icb_beds_long)
 #write csv
 date_today <- Sys.Date()
 if(CREATE_BACKSERIES == TRUE){
-  # overwrite backseries
+  # read in backseries pre Aug 23 made from trusts, then overwrite backseries
+  backdated_ics <- read_csv('./data/beds/backseries/beds_icb_backseries_pre_aug_23.csv')
+  icb_beds_long <- icb_beds_long %>%
+    rbind(backdated_ics) %>%
+    arrange(floor_month, region)
   write.csv(x = icb_beds_long, 
-            file = paste0('data/beds/backseries/beds_icb_backseries','.csv'), 
+            file = paste0('data/beds/backseries/beds_icb_backseries.csv'), 
             row.names = FALSE)
 } else {
   # append new data to backseries

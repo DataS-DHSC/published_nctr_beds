@@ -9,10 +9,10 @@ setwd(dirname(getActiveDocumentContext()$path))
 source(file = "./functions.R")
 
 # Set working directory 
-setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/20240129 - NCTR Published - Briefing Tool/Code/")
+setwd("~/../../Department of Health and Social Care/NW005 - DischargeAnalysisCenter/Analysis Projects/NCTR Published - Briefing Tool/Code/")
 
 # Create backseries for icb beds from create_backseries/ directory
-CREATE_BACKSERIES <- FALSE
+CREATE_BACKSERIES <- TRUE
 
 #If not creating backseries, then read in backseries
 if(CREATE_BACKSERIES == FALSE){
@@ -43,54 +43,56 @@ for(date in beds_files){
 # E.g. create_bs/ or trusts/
 # USER SHOULD AMMEND AS APPROPRIATE ----------------
 TRUST_CELL_REF_DF <- data.frame(month_year = year_month_vec,
-                                cell_ref = c(#"B15:O150", #april 2022
-                                             #"B15:O150", #may 2022
-                                             #"B15:O150", #june 2022
-                                             #"B15:O150", #july 2022
-                                             #"B15:O150", #august 2022
-                                             #"B15:O150", #september 2022
-                                             #"B15:O150", #october 2022
-                                             #"B15:O150", #november 2022
-                                             #"B15:O150", #december 2022
-                                             #"B15:O150", #january 2023
-                                             #"B15:O150", #february 2023
-                                             #"B15:O150", #march 2023
-                                             #"B15:O150", #april 2023
-                                             #"B15:O150", #may 2023
-                                             #"B15:O150", #june 2023
-                                             #"B15:O150", #july 2023
-                                             #"B15:O192", #august 2023
-                                             #"B15:O191", #september 2023
-                                             #"B15:O190", #october 2023
-                                             #"B15:O191", #november 2023
-                                             #"B15:O191", #december 2023
-                                             #"B15:O191", #january 2024
-                                             #"B15:O191", #february 2024
-                                             "B15:O191"), #march 2024
-                                ignore_rows = c(#12, #april 2022 
-                                                #12, #may 2022
-                                                #12, #june 2022
-                                                #12, #july 2022
-                                                #12, #august 2022
-                                                #12, #september 2022
-                                                #12, #october 2022
-                                                #12, #november 2022
-                                                #12, #december 2022
-                                                #12, #january 2023
-                                                #12, #february 2023
-                                                #12, #march 2023
-                                                #12, #april 2023
-                                                #12, #may 2023
-                                                #12, #june 2023
-                                                #12, #july 2023
-                                                #55, #august 2023
-                                                #55, #september 2023
-                                                #55, #october 2023
-                                                #55, #november 2023
-                                                #55, #december 2023
-                                                #55, #january 2024
-                                                #55,  #february 2024
-                                                55)) #march 2024
+                                cell_ref = c("B15:O150", #april 2022
+                                             "B15:O150", #may 2022
+                                             "B15:O150", #june 2022
+                                             "B15:O150", #july 2022
+                                             "B15:O150", #august 2022
+                                             "B15:O150", #september 2022
+                                             "B15:O150", #october 2022
+                                             "B15:O150", #november 2022
+                                             "B15:O150", #december 2022
+                                             "B15:O150", #january 2023
+                                             "B15:O150", #february 2023
+                                             "B15:O150", #march 2023
+                                             "B15:O150", #april 2023
+                                             "B15:O150", #may 2023
+                                             "B15:O150", #june 2023
+                                             "B15:O150", #july 2023
+                                             "B15:O192", #august 2023
+                                             "B15:O191", #september 2023
+                                             "B15:O190", #october 2023
+                                             "B15:O191", #november 2023
+                                             "B15:O191", #december 2023
+                                             "B15:O191", #january 2024
+                                             "B15:O191", #february 2024
+                                             "B15:O191", #march 2024
+                                             "B15:O191"), #april 2024
+                                ignore_rows = c(12, #april 2022 
+                                                12, #may 2022
+                                                12, #june 2022
+                                                12, #july 2022
+                                                12, #august 2022
+                                                12, #september 2022
+                                                12, #october 2022
+                                                12, #november 2022
+                                                12, #december 2022
+                                                12, #january 2023
+                                                12, #february 2023
+                                                12, #march 2023
+                                                12, #april 2023
+                                                12, #may 2023
+                                                12, #june 2023
+                                                12, #july 2023
+                                                55, #august 2023
+                                                55, #september 2023
+                                                55, #october 2023
+                                                55, #november 2023
+                                                55, #december 2023
+                                                55, #january 2024
+                                                55,  #february 2024
+                                                55, #march 2024
+                                                55)) #april 2024
 
 
 # Read data function ------------------------------------------------------
