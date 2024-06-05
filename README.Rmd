@@ -6,3 +6,11 @@
 -   Save latest NCTR monthly briefing document in data/NCTR/ as DAC pulls from ICB and trust level which do not quite equal national figures
 -   Run beds_nctr_published_final_national.R to output national nctr with beds for tool
 -   Run output_nctr_beds_trust_icb_final.R to output both icb and trust files for tool
+
+**Updating the beds backseries:**
+
+-   Download latest beds data into into the data/beds/icb/ and data/beds/trusts
+
+-   Run collate scripts, producing ICS and trust backseries
+
+-   National tbc
