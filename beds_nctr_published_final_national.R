@@ -73,7 +73,8 @@ NAT_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                              "B15:O16", #january 2024
                                              "B15:O16", #february 2024
                                              "B15:O16", #march 2024
-                                             "B15:O16"), #april 2024
+                                             "B15:O16", #april 2024
+                                             "B15:O16"), #may 2024
                                 ignore_rows = c(0, #april 2022 
                                                 0, #may 2022
                                                 0, #june 2022
@@ -98,7 +99,8 @@ NAT_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                                 0, #january 2024
                                                 0, #february 2024
                                                 0, #march 2024
-                                                0)) #april 2024
+                                                0, #april 2024
+                                                0)) #may 2024
 
 
 # Read data function ------------------------------------------------------
