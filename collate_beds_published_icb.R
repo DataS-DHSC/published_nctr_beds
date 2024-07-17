@@ -56,7 +56,8 @@ ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                            "B15:O67",  #feb 24
                                            "B15:O67", #mar 24
                                            "B15:O67", #apr 24
-                                           "B15:O67"), #may 24
+                                           "B15:O67", #may 24
+                                           "B15:O67"), #Jun 24
                               ignore_rows = c(11, 
                                               11, 
                                               11, 
@@ -66,7 +67,8 @@ ICB_CELL_REF_DF <- data.frame(month_year = year_month_vec,
                                               11,  #feb 24
                                               11, #mar 24
                                               11, #apr 24
-                                              11)) #may 24
+                                              11, #may 24
+                                              11)) #jun 24
 
 # Read data function ------------------------------------------------------
 
